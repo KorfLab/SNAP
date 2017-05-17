@@ -1,0 +1,40 @@
+zoeCDS.o: zoeCDS.c zoeCDS.h zoeDNA.h zoeFastaFile.h zoeTools.h \
+  zoeProtein.h zoeFeature.h zoeFeatureTable.h
+zoeCounter.o: zoeCounter.c zoeCounter.h zoeDNA.h zoeFastaFile.h \
+  zoeTools.h zoeProtein.h zoeFeature.h zoeMath.h zoeModel.h
+zoeDNA.o: zoeDNA.c zoeDNA.h zoeFastaFile.h zoeTools.h zoeProtein.h \
+  zoeFeature.h
+zoeDistribution.o: zoeDistribution.c zoeDistribution.h zoeMath.h \
+  zoeTools.h
+zoeDuration.o: zoeDuration.c zoeDuration.h zoeDistribution.h zoeMath.h \
+  zoeTools.h zoeFeature.h
+zoeFastaFile.o: zoeFastaFile.c zoeFastaFile.h zoeTools.h
+zoeFeature.o: zoeFeature.c zoeFeature.h zoeTools.h
+zoeFeatureFactory.o: zoeFeatureFactory.c zoeFeatureFactory.h zoeDNA.h \
+  zoeFastaFile.h zoeTools.h zoeProtein.h zoeFeature.h zoeScanner.h \
+  zoeMath.h zoeModel.h zoeFeatureTable.h zoeCDS.h
+zoeFeatureTable.o: zoeFeatureTable.c zoeFeatureTable.h zoeCDS.h zoeDNA.h \
+  zoeFastaFile.h zoeTools.h zoeProtein.h zoeFeature.h
+zoeHMM.o: zoeHMM.c zoeHMM.h zoeDuration.h zoeDistribution.h zoeMath.h \
+  zoeTools.h zoeFeature.h zoeState.h zoeModel.h zoeDNA.h zoeFastaFile.h \
+  zoeProtein.h zoePhasePref.h zoeTransition.h
+zoeIsochore.o: zoeIsochore.c zoeHMM.h zoeDuration.h zoeDistribution.h \
+  zoeMath.h zoeTools.h zoeFeature.h zoeState.h zoeModel.h zoeDNA.h \
+  zoeFastaFile.h zoeProtein.h zoePhasePref.h zoeTransition.h \
+  zoeIsochore.h
+zoeMath.o: zoeMath.c zoeMath.h zoeTools.h
+zoeModel.o: zoeModel.c zoeModel.h zoeDNA.h zoeFastaFile.h zoeTools.h \
+  zoeProtein.h zoeFeature.h zoeMath.h
+zoePhasePref.o: zoePhasePref.c zoePhasePref.h zoeMath.h zoeTools.h \
+  zoeFeature.h
+zoeProtein.o: zoeProtein.c zoeProtein.h zoeFastaFile.h zoeTools.h
+zoeScanner.o: zoeScanner.c zoeScanner.h zoeDNA.h zoeFastaFile.h \
+  zoeTools.h zoeProtein.h zoeFeature.h zoeMath.h zoeModel.h
+zoeState.o: zoeState.c zoeState.h zoeFeature.h zoeTools.h
+zoeTools.o: zoeTools.c zoeTools.h
+zoeTransition.o: zoeTransition.c zoeTransition.h zoeMath.h zoeTools.h \
+  zoeFeature.h
+zoeTrellis.o: zoeTrellis.c zoeTrellis.h zoeCDS.h zoeDNA.h zoeFastaFile.h \
+  zoeTools.h zoeProtein.h zoeFeature.h zoeFeatureFactory.h zoeScanner.h \
+  zoeMath.h zoeModel.h zoeFeatureTable.h zoeHMM.h zoeDuration.h \
+  zoeDistribution.h zoeState.h zoePhasePref.h zoeTransition.h

@@ -1,0 +1,61 @@
+/******************************************************************************\
+zoeCounter.h - part of the ZOE library for genomic analysis
+ 
+Copyright (C) Ian Korf 2002-2013.
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+The MIT License (MIT) - opensource.org/licenses/MIT
+
+\******************************************************************************/
+
+#ifndef ZOE_COUNTER_H
+#define ZOE_COUNTER_H
+
+#include <math.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+
+#include "zoeDNA.h"
+#include "zoeFeature.h"
+#include "zoeMath.h"
+#include "zoeModel.h"
+#include "zoeTools.h"
+
+struct zoeCounter  {
+	coor_t               min_pos;                   /* minimum scoring position */
+	coor_t               max_pos;                   /* maximum scoring position */
+	zoeDNA               dna;                       /* counters require a dna */
+	zoeDNA               anti;                      /* reverse-complement */
+	zoeModel             model;                     /* counters require a model */
+	struct zoeCounter ** subcounter;                /* for higher order models */
+	char               * sig;                       /* binary signature (SDT) */
+	void              (* count) (struct zoeCounter *, coor_t);  /* ptr to counting function */
+	void              (* countf)(struct zoeCounter *, zoeFeature);
+};
+typedef struct zoeCounter * zoeCounter;
+
+void       zoeDeleteCounter (zoeCounter);
+zoeCounter zoeNewCounter (zoeDNA, zoeDNA, zoeModel);
+
+
+#endif
+
