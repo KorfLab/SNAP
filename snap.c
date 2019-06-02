@@ -84,7 +84,7 @@ int main (int argc, char *argv[]) {
 	zoeCDS          gene;
 	zoeVec          genes;
 	int             label, i;
-	char            option[16], name[16];
+	char            option[32], name[32];
 	FILE          * aa_stream = NULL;
 	FILE          * tx_stream = NULL;
 	FILE          * xd_stream  = NULL;
