@@ -1,0 +1,4 @@
+
+script:
+  - make
+  - ./snap HMM/thale DNA/thale.dna.gz
