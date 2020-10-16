@@ -136,7 +136,7 @@ You may find some errors and warnings. Check these out in some kind of genome
 browser and remove those that are real errors. Next, break up the sequences into
 fragments with one gene per sequence with the following command:
 
-    fathom -genome.ann genome.dna -categorize 1000
+    fathom genome.ann genome.dna -categorize 1000
 
 There will be up to 1000 bp on either side of the genes. You will find
 several new files.
