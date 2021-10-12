@@ -20,14 +20,13 @@ information is:
 
 ## License ##
 
-This software is covered by the GNU General Public License. The license is
-included with the software and is available from www.gnu.org.
+This software is covered by the MIT License.
 
 ## Files and Directories ##
 
     DNA               Contains some sample sequences
     HMM               Contains SNAP parameter files
-    LICENSE           The GNU General Public License
+    LICENSE           MIT license
     Makefile          For compiling
     Makefile.include  Automatically generated, should not be edited
     Zoe               A library containing lots of the base functions
