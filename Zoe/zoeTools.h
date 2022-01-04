@@ -40,9 +40,9 @@ The MIT License (MIT) - opensource.org/licenses/MIT
 #include <stdlib.h>
 #include <string.h>
 
-const char * zoeFunction;
-const char * zoeConstructor;
-const char * zoeMethod;
+extern const char * zoeFunction;
+extern const char * zoeConstructor;
+extern const char * zoeMethod;
 
 void   zoeLibInfo (void);
 void   zoeSetProgramName (const char*);
