@@ -1,49 +1,49 @@
 zoeCDS.o: Zoe/zoeCDS.c Zoe/zoeCDS.h Zoe/zoeDNA.h Zoe/zoeFastaFile.h \
-  Zoe/zoeTools.h Zoe/zoeProtein.h Zoe/zoeFeature.h Zoe/zoeFeatureTable.h
+ Zoe/zoeTools.h Zoe/zoeProtein.h Zoe/zoeFeature.h Zoe/zoeFeatureTable.h
 zoeCounter.o: Zoe/zoeCounter.c Zoe/zoeCounter.h Zoe/zoeDNA.h \
-  Zoe/zoeFastaFile.h Zoe/zoeTools.h Zoe/zoeProtein.h Zoe/zoeFeature.h \
-  Zoe/zoeMath.h Zoe/zoeModel.h
+ Zoe/zoeFastaFile.h Zoe/zoeTools.h Zoe/zoeProtein.h Zoe/zoeFeature.h \
+ Zoe/zoeMath.h Zoe/zoeModel.h
 zoeDNA.o: Zoe/zoeDNA.c Zoe/zoeDNA.h Zoe/zoeFastaFile.h Zoe/zoeTools.h \
-  Zoe/zoeProtein.h Zoe/zoeFeature.h
+ Zoe/zoeProtein.h Zoe/zoeFeature.h
 zoeDistribution.o: Zoe/zoeDistribution.c Zoe/zoeDistribution.h \
-  Zoe/zoeMath.h Zoe/zoeTools.h
+ Zoe/zoeMath.h Zoe/zoeTools.h
 zoeDuration.o: Zoe/zoeDuration.c Zoe/zoeDuration.h Zoe/zoeDistribution.h \
-  Zoe/zoeMath.h Zoe/zoeTools.h Zoe/zoeFeature.h
+ Zoe/zoeMath.h Zoe/zoeTools.h Zoe/zoeFeature.h
 zoeFastaFile.o: Zoe/zoeFastaFile.c Zoe/zoeFastaFile.h Zoe/zoeTools.h
 zoeFeature.o: Zoe/zoeFeature.c Zoe/zoeFeature.h Zoe/zoeTools.h
 zoeFeatureFactory.o: Zoe/zoeFeatureFactory.c Zoe/zoeFeatureFactory.h \
-  Zoe/zoeDNA.h Zoe/zoeFastaFile.h Zoe/zoeTools.h Zoe/zoeProtein.h \
-  Zoe/zoeFeature.h Zoe/zoeScanner.h Zoe/zoeMath.h Zoe/zoeModel.h \
-  Zoe/zoeFeatureTable.h Zoe/zoeCDS.h
+ Zoe/zoeDNA.h Zoe/zoeFastaFile.h Zoe/zoeTools.h Zoe/zoeProtein.h \
+ Zoe/zoeFeature.h Zoe/zoeScanner.h Zoe/zoeMath.h Zoe/zoeModel.h \
+ Zoe/zoeFeatureTable.h Zoe/zoeCDS.h
 zoeFeatureTable.o: Zoe/zoeFeatureTable.c Zoe/zoeFeatureTable.h \
-  Zoe/zoeCDS.h Zoe/zoeDNA.h Zoe/zoeFastaFile.h Zoe/zoeTools.h \
-  Zoe/zoeProtein.h Zoe/zoeFeature.h
+ Zoe/zoeCDS.h Zoe/zoeDNA.h Zoe/zoeFastaFile.h Zoe/zoeTools.h \
+ Zoe/zoeProtein.h Zoe/zoeFeature.h
 zoeHMM.o: Zoe/zoeHMM.c Zoe/zoeHMM.h Zoe/zoeDuration.h \
-  Zoe/zoeDistribution.h Zoe/zoeMath.h Zoe/zoeTools.h Zoe/zoeFeature.h \
-  Zoe/zoeState.h Zoe/zoeModel.h Zoe/zoeDNA.h Zoe/zoeFastaFile.h \
-  Zoe/zoeProtein.h Zoe/zoePhasePref.h Zoe/zoeTransition.h
+ Zoe/zoeDistribution.h Zoe/zoeMath.h Zoe/zoeTools.h Zoe/zoeFeature.h \
+ Zoe/zoeState.h Zoe/zoeModel.h Zoe/zoeDNA.h Zoe/zoeFastaFile.h \
+ Zoe/zoeProtein.h Zoe/zoePhasePref.h Zoe/zoeTransition.h
 zoeIsochore.o: Zoe/zoeIsochore.c Zoe/zoeHMM.h Zoe/zoeDuration.h \
-  Zoe/zoeDistribution.h Zoe/zoeMath.h Zoe/zoeTools.h Zoe/zoeFeature.h \
-  Zoe/zoeState.h Zoe/zoeModel.h Zoe/zoeDNA.h Zoe/zoeFastaFile.h \
-  Zoe/zoeProtein.h Zoe/zoePhasePref.h Zoe/zoeTransition.h \
-  Zoe/zoeIsochore.h
+ Zoe/zoeDistribution.h Zoe/zoeMath.h Zoe/zoeTools.h Zoe/zoeFeature.h \
+ Zoe/zoeState.h Zoe/zoeModel.h Zoe/zoeDNA.h Zoe/zoeFastaFile.h \
+ Zoe/zoeProtein.h Zoe/zoePhasePref.h Zoe/zoeTransition.h \
+ Zoe/zoeIsochore.h
 zoeMath.o: Zoe/zoeMath.c Zoe/zoeMath.h Zoe/zoeTools.h
 zoeModel.o: Zoe/zoeModel.c Zoe/zoeModel.h Zoe/zoeDNA.h Zoe/zoeFastaFile.h \
-  Zoe/zoeTools.h Zoe/zoeProtein.h Zoe/zoeFeature.h Zoe/zoeMath.h
+ Zoe/zoeTools.h Zoe/zoeProtein.h Zoe/zoeFeature.h Zoe/zoeMath.h
 zoePhasePref.o: Zoe/zoePhasePref.c Zoe/zoePhasePref.h Zoe/zoeMath.h \
-  Zoe/zoeTools.h Zoe/zoeFeature.h
+ Zoe/zoeTools.h Zoe/zoeFeature.h
 zoeProtein.o: Zoe/zoeProtein.c Zoe/zoeProtein.h Zoe/zoeFastaFile.h \
-  Zoe/zoeTools.h
+ Zoe/zoeTools.h
 zoeScanner.o: Zoe/zoeScanner.c Zoe/zoeScanner.h Zoe/zoeDNA.h \
-  Zoe/zoeFastaFile.h Zoe/zoeTools.h Zoe/zoeProtein.h Zoe/zoeFeature.h \
-  Zoe/zoeMath.h Zoe/zoeModel.h
+ Zoe/zoeFastaFile.h Zoe/zoeTools.h Zoe/zoeProtein.h Zoe/zoeFeature.h \
+ Zoe/zoeMath.h Zoe/zoeModel.h
 zoeState.o: Zoe/zoeState.c Zoe/zoeState.h Zoe/zoeFeature.h Zoe/zoeTools.h
 zoeTools.o: Zoe/zoeTools.c Zoe/zoeTools.h
 zoeTransition.o: Zoe/zoeTransition.c Zoe/zoeTransition.h Zoe/zoeMath.h \
-  Zoe/zoeTools.h Zoe/zoeFeature.h
+ Zoe/zoeTools.h Zoe/zoeFeature.h
 zoeTrellis.o: Zoe/zoeTrellis.c Zoe/zoeTrellis.h Zoe/zoeCDS.h Zoe/zoeDNA.h \
-  Zoe/zoeFastaFile.h Zoe/zoeTools.h Zoe/zoeProtein.h Zoe/zoeFeature.h \
-  Zoe/zoeFeatureFactory.h Zoe/zoeScanner.h Zoe/zoeMath.h Zoe/zoeModel.h \
-  Zoe/zoeFeatureTable.h Zoe/zoeHMM.h Zoe/zoeDuration.h \
-  Zoe/zoeDistribution.h Zoe/zoeState.h Zoe/zoePhasePref.h \
-  Zoe/zoeTransition.h
+ Zoe/zoeFastaFile.h Zoe/zoeTools.h Zoe/zoeProtein.h Zoe/zoeFeature.h \
+ Zoe/zoeFeatureFactory.h Zoe/zoeScanner.h Zoe/zoeMath.h Zoe/zoeModel.h \
+ Zoe/zoeFeatureTable.h Zoe/zoeHMM.h Zoe/zoeDuration.h \
+ Zoe/zoeDistribution.h Zoe/zoeState.h Zoe/zoePhasePref.h \
+ Zoe/zoeTransition.h

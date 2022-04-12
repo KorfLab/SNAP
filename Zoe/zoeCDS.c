@@ -1,6 +1,6 @@
 /******************************************************************************\
 zoeCDS.c - part of the ZOE library for genomic analysis
- 
+
 Copyright (C) Ian Korf 2002-2013.
 
 Permission is hereby granted, free of charge, to any person obtaining a
@@ -54,7 +54,7 @@ static const char S5N[5] = {'T', 'G', 'C', 'A', 'N'}; /* negative */
 static zoeFeatureVec get_sorted_exons (zoeFeatureVec exons, zoeFeatureVec features) {
 	int i;
 	zoeFeature f;
-	
+
 	exons = zoeNewFeatureVec();
 	for (i = 0; i < features->size; i++) {
 		f = features->elem[i];
@@ -65,9 +65,9 @@ static zoeFeatureVec get_sorted_exons (zoeFeatureVec exons, zoeFeatureVec featur
 			default: break;
 		}
 	}
-	
+
 	qsort(exons->elem, exons->size, sizeof(zoeFeature), zoeFeatureCmpPtr);
-	
+
 	return exons;
 }
 
@@ -76,7 +76,7 @@ static int idiotic_errors (zoeCDS cds) {
 	int        Esngl_count = 0, Einit_count = 0, Eterm_count = 0;
 	char       text[256];
 	zoeFeature exon;
-	
+
 	/* identify strand */
 	for (i = 0; i < cds->exons->size; i++) {
 		exon = cds->exons->elem[i];
@@ -94,13 +94,13 @@ static int idiotic_errors (zoeCDS cds) {
 		sprintf(text, "gene:unknown_strand");
 		zoePushTVec(cds->errors, text);
 	}
-	
+
 	/* change all undefined strands to consensus strand */
 	for (i = 0; i < cds->exons->size; i++) {
 		exon = cds->exons->elem[i];
 		if (exon->strand == UNDEFINED_STRAND) exon->strand = cds->strand;
 	}
-	
+
 	/* look for multiple occurrances of unique exon types */
 	for (i = 0; i < cds->exons->size; i++) {
 		exon = cds->exons->elem[i];
@@ -123,7 +123,7 @@ static int idiotic_errors (zoeCDS cds) {
 		sprintf(text, "gene:multiple_Eterm");
 		zoePushTVec(cds->errors, text);
 	}
-	
+
 	/* make sure Einit is at start and Eterm is at end */
 	if (Einit_count) {
 		if (cds->strand == '+') {
@@ -151,7 +151,7 @@ static int idiotic_errors (zoeCDS cds) {
 			}
 		}
 	}
-	
+
 	/* look for exons out of bounds */
 	for (i = 0; i < cds->exons->size; i++) {
 		exon = cds->exons->elem[i];
@@ -161,7 +161,7 @@ static int idiotic_errors (zoeCDS cds) {
 			zoePushTVec(cds->errors, text);
 		}
 	}
-	
+
 	/* look for overlapping exons */
 	for (i = 1; i < cds->exons->size; i++) {
 		exon = cds->exons->elem[i];
@@ -174,7 +174,7 @@ static int idiotic_errors (zoeCDS cds) {
 			zoePushTVec(cds->errors, text);
 		}
 	}
-		
+
 	if (cds->errors->size) return 1;
 	else                   return 0;
 }
@@ -184,13 +184,13 @@ static zoeDNA transcribe (const char * name, const zoeDNA dna, const zoeFeatureV
 	zoeDNA       tx, anti;
 	int          i, estart, elength, nt_length = 0;
 	char       * seq = NULL;
-			
+
 	/* calculate length of transcript */
 	for (i = 0; i < exons->size; i++) {
 		exon = exons->elem[i];
 		nt_length += (exon->end - exon->start + 1);
 	}
-	
+
 	/* create transcript char[] */
 	seq = zoeMalloc(nt_length +1);
 	estart = 0;
@@ -202,7 +202,7 @@ static zoeDNA transcribe (const char * name, const zoeDNA dna, const zoeFeatureV
 	}
 	seq[nt_length] = '\0';
 	if (strlen(seq) != nt_length) zoeExit("transcribe fatal error");
-	
+
 	if (exons->elem[0]->strand == '+') {
 		tx = zoeNewDNA(name, seq);
 		free(seq);
@@ -241,7 +241,7 @@ struct exon_feature {
 static struct exon_feature get_exon_features (zoeFeature exon, zoeDNA dna) {
 	struct exon_feature ef = {0,0,0,0,0};
 	char c1, c2, c3;
-	
+
 	/* start */
 	if (exon->strand == '+') {
 		c1 = dna->s5[exon->start];
@@ -254,7 +254,7 @@ static struct exon_feature get_exon_features (zoeFeature exon, zoeDNA dna) {
 		c3 = dna->s5[exon->end -2];
 		if (c1 == 3 && c2 == 0 && c3 == 1) ef.start = 1;
 	}
-	
+
 	/* stop */
 	if (exon->strand == '+') {
 		c1 = dna->s5[exon->end -2];
@@ -275,7 +275,7 @@ static struct exon_feature get_exon_features (zoeFeature exon, zoeDNA dna) {
 			else if (c2 == 1 && c3 == 3) ef.stop = 1;
 		}
 	}
-	
+
 	/* lazy stop */
 	if (exon->strand == '+' && ef.stop == 0 && exon->end +3 < dna->length) {
 		c1 = dna->s5[exon->end +1];
@@ -296,7 +296,7 @@ static struct exon_feature get_exon_features (zoeFeature exon, zoeDNA dna) {
 			else if (c2 == 1 && c3 == 3) ef.lazy = 1;
 		}
 	}
-	
+
 	/* donor */
 	if (exon->strand == '+' && exon->end +2 < dna->length) {
 		c1 = dna->s5[exon->end+1];
@@ -307,7 +307,7 @@ static struct exon_feature get_exon_features (zoeFeature exon, zoeDNA dna) {
 		c2 = dna->s5[exon->start -2];
 		if (c1 == 1 && c2 == 0) ef.donor = 1;
 	}
-	
+
 	/* acceptor */
 	if (exon->strand == '+' && exon->start >= 2) {
 		c1 = dna->s5[exon->start -2];
@@ -318,7 +318,7 @@ static struct exon_feature get_exon_features (zoeFeature exon, zoeDNA dna) {
 		c2 = dna->s5[exon->end +1];
 		if (c1 == 3 && c2 == 1) ef.acceptor = 1;
 	}
-	
+
 	return ef;
 }
 
@@ -332,7 +332,7 @@ static struct best_translation get_best_translation (zoeDNA tx) {
 	struct best_translation bt;
 	zoeProtein pro[3];
 	int i, best_score, best_idx, score;
-	
+
 	best_score = -1000000;
 	best_idx   = -1;
 	for (i = 0; i <= 2; i++) {
@@ -345,13 +345,13 @@ static struct best_translation get_best_translation (zoeDNA tx) {
 			best_idx = i;
 		}
 	}
-	
+
 	bt.inc5 = best_idx;
 	bt.inc3 = (tx->length - best_idx) % 3;
 	bt.aa   = pro[best_idx];
-	
+
 	for (i = 0; i <= 2; i++) if (i != best_idx) zoeDeleteProtein(pro[i]);
-	
+
 	return bt;
 }
 
@@ -359,9 +359,9 @@ static struct best_translation get_best_translation (zoeDNA tx) {
  PUBLIC FUNCTIONS
 \******************************************************************************/
 
-void zoeDeleteCDS (zoeCDS cds) {	
+void zoeDeleteCDS (zoeCDS cds) {
 	if (cds == NULL) return;
-	
+
 	if (cds->dna) {
 		cds->dna = NULL; /* does not delete, just a pointer to parent */
 	}
@@ -402,10 +402,10 @@ zoeCDS zoeNewCDS (const char * name, const zoeDNA dna, const zoeFeatureVec featu
 	zoeFeature exon, einit, eterm, intron;
 	char text[256];
 	struct exon_feature efstart, efstop;
-	struct best_translation bt;	
+	struct best_translation bt;
 	int i, nt_length, elength, inc5, inc3, frame, idx, b1, b2, b3, b4, split;
 	int exstart, exend, exinc;
-	
+
 	/* assigned immediately */
 	cds->dna      = dna;
 	cds->name     = zoeMalloc(strlen(name) + 1); strcpy(cds->name, name);
@@ -413,11 +413,11 @@ zoeCDS zoeNewCDS (const char * name, const zoeDNA dna, const zoeFeatureVec featu
 	cds->source   = zoeCopyFeatureVec(features);
 	cds->score    = MIN_SCORE; /* not assigned in zoeNewCDS */
 	cds->strand   = '='; /* edited in idiotic_errors */
-	
+
 	/* assigned at various points */
 	cds->errors   = zoeNewTVec();
 	cds->warnings = zoeNewTVec();
-	
+
 	/* assigned late */
 	cds->introns     = zoeNewFeatureVec();
 	cds->start       = 0;
@@ -429,20 +429,20 @@ zoeCDS zoeNewCDS (const char * name, const zoeDNA dna, const zoeFeatureVec featu
 	cds->start_found = 0;
 	cds->end_found   = 0;
 	cds->OK          = 0;
-	
+
 	/* check for no exons - can happen in SNAP that labeled things aren't exons */
 	if (cds->exons->size == 0) {
 		sprintf(text, "gene:no_exons");
 		zoePushTVec(cds->errors, text);
 		return cds;
 	}
-	
+
 	/* check for idiotic errors and abort if necessary */
 	if (idiotic_errors(cds)) {
 		zoeReportCDS(stderr, cds);
 		return cds;
 	}
-	
+
 	/* start and stop */
 	if (cds->strand == '+') {
 		einit = cds->exons->elem[0];
@@ -452,27 +452,27 @@ zoeCDS zoeNewCDS (const char * name, const zoeDNA dna, const zoeFeatureVec featu
 		if (efstop.lazy) eterm->end += 3;
 		cds->start = einit->start;
 		cds->end   = eterm->end;
-		
+
 	} else {
 		einit = cds->exons->elem[cds->exons->size -1];
 		eterm = cds->exons->elem[0];
-		efstart = get_exon_features(einit, dna);		
+		efstart = get_exon_features(einit, dna);
 		efstop = get_exon_features(eterm, dna);
 		if (efstop.lazy) eterm->start -= 3;
 		cds->start = eterm->start;
 		cds->end   = einit->end;
 	}
-	
+
 	nt_length = 0;
 	for (i = 0; i < cds->exons->size; i++) {
 		nt_length += cds->exons->elem[i]->end - cds->exons->elem[i]->start +1;
 	}
-	
+
 	if (efstart.start) cds->start_found = 1;
 	if (nt_length % 3 == 0)
 		if (efstop.lazy || efstop.stop) cds->end_found = 1;
-	
-	
+
+
 	if (!(cds->start_found && cds->end_found)) {
 		split = 0;
 		if (einit->end - einit->start < 2) {
@@ -488,18 +488,18 @@ zoeCDS zoeNewCDS (const char * name, const zoeDNA dna, const zoeFeatureVec featu
 		}
 		zoePushTVec(cds->warnings, text);
 	}
-	
-	/* re-label generic exons as Einit, Eterm, Esngl only if all exons defined as Exon 
-	all_exon = 1;
+
+	/* re-label generic exons as Einit, Eterm, Esngl only if all exons defined as Exon */
+	// this section was commented out before, not sure why
+	// maybe there was a good reason -- Ian baflled about his thoughts in 2022
+	int all_exon = 1;
 	for (i = 0; i < cds->exons->size; i++) {
 		if (cds->exons->elem[i]->label != Exon) {
 			all_exon = 0;
 			break;
 		}
 	}
-	*/
-	
-	/*
+
 	if (all_exon) {
 		if (cds->exons->size == 1) {
 			exon = cds->exons->elem[0];
@@ -511,27 +511,27 @@ zoeCDS zoeNewCDS (const char * name, const zoeDNA dna, const zoeFeatureVec featu
 			if (cds->end_found)   eterm->label = Eterm;
 		}
 	}
-	*/
-	
+
+
 	/* transcribe and translate */
 	cds->tx = transcribe(name, dna, cds->exons);
 	bt = get_best_translation(cds->tx);
 	cds->inc5 = bt.inc5;
 	cds->inc3 = bt.inc3;
 	cds->aa   = bt.aa;
-	
+
 	if (has_internal_stops(cds->aa)) {
 		sprintf(text, "cds:internal_stop");
 		zoePushTVec(cds->errors, text);
 	}
-	
+
 	/*
 	if (has_ambiguous_aa(cds->aa)) {
 		sprintf(text, "cds:ambiguous_aa");
 		zoePushTVec(cds->warnings, text);
 	}
 	*/
-	
+
 	/* causing probs
 	if (cds->start_found && cds->inc5 != 0) {
 		sprintf(text, "cds:start_conflict");
@@ -541,7 +541,7 @@ zoeCDS zoeNewCDS (const char * name, const zoeDNA dna, const zoeFeatureVec featu
 		sprintf(text, "cds:stop_conflict");
 		zoePushTVec(cds->errors, text);
 	}*/
-	
+
 	/* create introns */
 	intron = zoeNewFeature(Intron, 0, 0, cds->strand, 0, 0, 0, 0, name);
 	for (i = 1; i < cds->exons->size; i++) {
@@ -550,7 +550,7 @@ zoeCDS zoeNewCDS (const char * name, const zoeDNA dna, const zoeFeatureVec featu
 		zoePushFeatureVec(cds->introns, intron);
 	}
 	zoeDeleteFeature(intron);
-	
+
 	/* short/long genes */
 	nt_length = cds->end - cds->start + 1;
 	if (nt_length < MIN_GENE) {
@@ -561,10 +561,10 @@ zoeCDS zoeNewCDS (const char * name, const zoeDNA dna, const zoeFeatureVec featu
 		sprintf(text, "gene:long(%d)", nt_length);
 		zoePushTVec(cds->warnings, text);
 	}
-	
+
 	/* short/long exons */
 	for (i = 0; i < cds->exons->size; i++) {
-		exon = cds->exons->elem[i];		
+		exon = cds->exons->elem[i];
 		idx = (cds->strand == '+') ? i +1 : cds->exons->size -i;
 		nt_length = exon->end - exon->start + 1;
 		if (nt_length < MIN_EXON) {
@@ -575,7 +575,7 @@ zoeCDS zoeNewCDS (const char * name, const zoeDNA dna, const zoeFeatureVec featu
 			zoePushTVec(cds->warnings, text);
 		}
 	}
-	
+
 	/* short/long introns */
 	for (i = 0; i < cds->introns->size; i++) {
 		intron = cds->introns->elem[i];
@@ -590,17 +590,17 @@ zoeCDS zoeNewCDS (const char * name, const zoeDNA dna, const zoeFeatureVec featu
 			zoePushTVec(cds->warnings, text);
 		}
 	}
-	
+
 	/* canonical splicing */
 	for (i = 0; i < cds->introns->size; i++) {
 		intron = cds->introns->elem[i];
 		idx = (cds->strand == '+') ? i +1 : cds->introns->size -i;
-		
+
 		b1 = cds->dna->s5[intron->start];
 		b2 = cds->dna->s5[intron->start +1];
 		b3 = cds->dna->s5[intron->end -1];
 		b4 = cds->dna->s5[intron->end];
-		
+
 		if (intron->strand == '+') {
 			if ( !(b1==2 && b2==3 && b3==0 && b4==2)) {
 				sprintf(text, "intron-%d:%c%c..%c%c", idx, S5P[b1], S5P[b2], S5P[b3], S5P[b4]);
@@ -613,14 +613,14 @@ zoeCDS zoeNewCDS (const char * name, const zoeDNA dna, const zoeFeatureVec featu
 			}
 		}
 	}
-	
+
 	/* label with correct phase and frame */
 	if      (cds->inc5 == 1) nt_length = 2;
 	else if (cds->inc5 == 2) nt_length = 1;
 	else                     nt_length = 0;
-		
+
 	elength = 0;
-	
+
 	/* dgg; fix for cdsincomplete/complete: phase/inc5 should be 0 for complete */
 	if (cds->strand == '-') {
 		exstart = cds->exons->size -1;
@@ -631,7 +631,7 @@ zoeCDS zoeNewCDS (const char * name, const zoeDNA dna, const zoeFeatureVec featu
 		exend = cds->exons->size;
 		exinc = 1;
 	}
-	
+
 	for (i = exstart; i != exend; i += exinc) { /* dgg fixes */
 		exon        = cds->exons->elem[i];
 		elength     = exon->end - exon->start + 1;
@@ -648,26 +648,26 @@ zoeCDS zoeNewCDS (const char * name, const zoeDNA dna, const zoeFeatureVec featu
 			zoeExit("%s", cds->name);
 		}
 	}
-	
+
 	if (cds->errors->size == 0) cds->OK = 1;
-	
+
 	return cds;
 }
 
 void zoeAntiCDS (zoeCDS cds, int length) {
 	int i, start, end;
-	
+
 	start = length - cds->end   -1;
 	end   = length - cds->start -1;
-	
+
 	cds->start  = start;
 	cds->end    = end;
 	cds->strand = (cds->strand == '+') ? '-' : '+';
-	
+
 	for (i = 0; i < cds->exons->size; i++) {
 		zoeAntiFeature(cds->exons->elem[i], length);
 	}
-	
+
 	for (i = 0; i < cds->introns->size; i++) {
 		zoeAntiFeature(cds->introns->elem[i], length);
 	}
@@ -675,7 +675,7 @@ void zoeAntiCDS (zoeCDS cds, int length) {
 
 void zoeWriteCDS (FILE * stream, const zoeCDS cds) {
 	int i;
-	
+
 	/*zoeS(stream, ">%s\n", cds->name);*/
 	for (i = 0; i < cds->exons->size; i++) {
 		zoeWriteFeature(stream, cds->exons->elem[i]);
@@ -684,7 +684,7 @@ void zoeWriteCDS (FILE * stream, const zoeCDS cds) {
 
 void zoeWriteFullCDS (FILE * stream, const zoeCDS cds) {
 	int i;
-	
+
 	/*zoeS(stream, ">%s\n", cds->name);*/
 	for (i = 0; i < cds->exons->size; i++) {
 		zoeWriteFeature(stream, cds->exons->elem[i]);
@@ -695,7 +695,7 @@ void zoeWriteFullCDS (FILE * stream, const zoeCDS cds) {
 
 void zoeWriteTriteCDS (FILE * stream, const zoeCDS cds) {
 	int i;
-	
+
 	/*zoeS(stream, ">%s\n", cds->name);*/
 	for (i = 0; i < cds->exons->size; i++) {
 		zoeWriteTriteFeature(stream, cds->exons->elem[i]);
@@ -704,24 +704,24 @@ void zoeWriteTriteCDS (FILE * stream, const zoeCDS cds) {
 
 void zoeReportCDS (FILE * stream, const zoeCDS cds) {
 	int i;
-	
+
 	zoeS(stream, "%s %d %d %d %c", cds->name, cds->start +1, cds->end +1,
 		cds->exons->size, cds->strand);
-	
+
 	if (cds->errors->size) {
 		zoeS(stream, " errors(%d):", cds->errors->size);
 		for (i = 0; i < cds->errors->size; i++) {
 			zoeS(stream, " %s", cds->errors->elem[i]);
 		}
 	}
-	
+
 	if (cds->warnings->size) {
 		zoeS(stream, " warnings(%d):", cds->warnings->size);
 		for (i = 0; i < cds->warnings->size; i++) {
 			zoeS(stream, " %s", cds->warnings->elem[i]);
 		}
 	}
-	
+
 	zoeS(stream, "\n");
 }
 
@@ -736,7 +736,7 @@ int zoeCDScmp (const zoeCDS f1, const zoeCDS f2) {
 	else if (f1->start > f2->start) return  1;
 	if      (f1->end < f2->end) return -1;
 	else if (f1->end > f2->end) return  1;
-	
+
 	/* strand check */
 	if      (f1->strand < f2->strand) return -1;
 	else if (f1->strand > f2->strand) return  1;
@@ -746,13 +746,13 @@ int zoeCDScmp (const zoeCDS f1, const zoeCDS f2) {
 		if      (f1->tx->length > f2->tx->length) return  1;
 		else if (f1->tx->length < f2->tx->length) return -1;
 	}
-	
+
 	/* transcript sequence check */
 	if (f1->tx && f2->tx) {
 		if (strcmp(f1->tx->seq, f2->tx->seq) == 0) return 0;
 		else                                       return 1;
 	}
-	
+
 	/* I suppose I could check the individual features ... */
 	return 0;
 
@@ -766,9 +766,9 @@ int zoeCDSsOverlap (const zoeCDS a, const zoeCDS b) {
 
 int zoeCDSsShareSequence (const zoeCDS a, const zoeCDS b) {
 	int i, j;
-	
+
 	if (!zoeCDSsOverlap(a, b)) return 0;
-	 
+
 	for (i = 0; i < a->exons->size; i++) {
 		for (j = 0; j < b->exons->size; j++) {
 			if (zoeFeaturesOverlap(a->exons->elem[i], b->exons->elem[j])) {
@@ -776,7 +776,7 @@ int zoeCDSsShareSequence (const zoeCDS a, const zoeCDS b) {
 			}
 		}
 	}
-	
+
 	return 0;
 }
 
