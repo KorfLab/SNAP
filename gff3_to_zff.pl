@@ -1,10 +1,17 @@
 #!/usr/bin/perl
 use strict;
 use warnings 'FATAL' => 'all';
+use Getopt::Std;
+
+die "usage: $0 <fasta file> <gff file>\n" unless @ARGV == 2;
+my ($fasta, $gff) = @ARGV;
 
 my %c;
-open(my $gf, "genes.gff") or die;
-while (<$gf>) {	
+my $gf;
+if ($gff =~ /\.gz$/) {open($gf, "gunzip -c $gff |") or die}
+else                 {open($gf, $gff) or die}
+
+while (<$gf>) {
 	next if /^#/;
 	my ($chr, $m, $f, $beg, $end, $ph, $str, $fr, $grp) = split(/\t/, $_);
 	next unless $f eq 'CDS';
@@ -14,7 +21,9 @@ while (<$gf>) {
 }
 
 my @id;
-open(my $ff, "gunzip -c genome.fa.gz |") or die;
+my $ff;
+if ($fasta =~ /\.gz$/) {open($ff, "gunzip -c genome.fa.gz |") or die}
+else                   {open($ff, $fasta) or die}
 while (<$ff>) {
 	if (/>(\S+)/) {
 		push @id, $1;
