@@ -22,9 +22,10 @@ while (<$gf>) {
 
 my @id;
 my $ff;
-if ($fasta =~ /\.gz$/) {open($ff, "gunzip -c genome.fa.gz |") or die}
+if ($fasta =~ /\.gz$/) {open($ff, "gunzip -c $fasta |") or die}
 else                   {open($ff, $fasta) or die}
 while (<$ff>) {
+	chomp;
 	if (/>(\S+)/) {
 		push @id, $1;
 	}

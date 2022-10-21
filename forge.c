@@ -664,7 +664,7 @@ void outputDurations (void) {
 	
 	if (VERBOSE) zoeE("durations...");
 	
-//	smoothCounts(EinitD); // caused problems, should rewrite smoothing function
+	smoothCounts(EinitD); // smoothing needs rewrite
 	outputDuration(Einit, fixed);
 	
 	smoothCounts(ExonD);

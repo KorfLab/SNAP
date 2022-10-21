@@ -120,54 +120,122 @@ example of the long format:
     Exon    4185   4406   +   225   1   2   2   Y73E7A.7
     Eterm   5103   5280   +    46   1   0   2   Y73E7A.7
 
-The most important part of parameter estimation is preparing a training set.
-There are many ways to go about this. At the end, you want these in the ZFF
-short format. Save the ZFF as genome.ann and the FASTA as genome.dna. The first
-step is to look at some features of the genes:
 
-    fathom genome.ann genome.dna -gene-stats 
+TUTORIAL
+--------
 
-Next, you want to verify that the genes have no obvious errors:
+In this tutorial, we will create SNAP HMM files for 3 different genomes. In the 
+`DATA` directory, you will find fasta and gff3 files corresponding to 1 percent 
+of the A. thaliana, C. elegans, and D. melanogaster genomes. Let's start by 
+creating a directory for training A. thaliana in the main SNAP directory. We'll 
+run `gff3_to_zff.pl` to convert the annotation to ZFF.
 
-    fathom genome.ann genome.dna -validate
+```
+mkdir train_at
+cd train_at
+../gff3_to_zff.pl ../DATA/at.fa.gz ../DATA/at.gff3.gz > at.zff
+```
 
-You may find some errors and warnings. Check these out in some kind of genome
-browser and remove those that are real errors. Next, break up the sequences into
-fragments with one gene per sequence with the following command:
+The next step is to check for errors in the annotation. The training procedure
+assumes that genes are _canonical_ in various respects.
 
-    fathom -genome.ann genome.dna -categorize 1000
++ Coding sequences start with ATG and end in a stop codon
++ Splice sites follow the GT..AG rule
++ Genes are at least 150 bp
++ Exons are at least 6 bp
++ CDS are at least 150 bp
++ Introns are at least 30 bp
 
-There will be up to 1000 bp on either side of the genes. You will find
-several new files.
+Running `fathom -validate` will tell you which genes look ok and which genes 
+look suspicious. Let's try one.
 
-    alt.ann, alt.dna (genes with alternative splicing)
-    err.ann, err.dna (genes that have errors)
-    olp.ann, olp.dna (genes that overlap other genes)
-    wrn.ann, wrn.dna (genes with warnings)
-    uni.ann, uni.dna (single gene per sequence)
+```
+../fathom -validate at.zff ../DATA/at.fa.gz > at.validate
+```
 
-Convert the uni genes to plus stranded with the command:
+This will produce a bunch of output to STDERR. You will see several WARNING 
+lines saying the DNA and annotation don't have the same definition lines. 
+That's okay. The ZFF contains only the sequence id from the FASTA file and not 
+the whole definition line present in the original FASTA. The last line gives 
+some overall stats.
 
-    fathom uni.ann uni.dna -export 1000 -plus
+```
+463 genes, 463 OK, 40 warnings, 0 errors
+```
 
-You will find 4 new files:
+If you examine the `at.validate` file, you will see warnings for some short 
+genes, short exons, non-canonical introns, etc. We won't be using these to 
+train SNAP. To split genes into various categories use the `-categorize` 
+function of `fathom` and give it a value for how much intergenic sequence you 
+want on each side of a gene. For example `fathom -categorize 1000` attempts to 
+put 1000 bp of genomic sequence on each side of a gene. However, if two genes 
+are close to each other, say only 400 bp apart, they split the intergenic 
+sequence and each get 200 bp of intergenic.
 
-    export.aa   proteins corresponding to each gene
-    export.ann  gene structure on the plus strand
-    export.dna  DNA of the plus strand
-    export.tx   transcripts for each gene
+```
+../fathom -categorize 100 at.zff ../DATA/at.fa.gz
+```
 
-The parameter estimation program, forge, creates a lot of files. You probably
-want to create a directory to keep things tidy before you execute the program.
+This produces several new files:
 
-    mkdir params
-    cd params
-    forge ../export.ann ../export.dna
-    cd ..
++ `alt.*` contains genes with alternative splicing
++ `err.*` contains genes with errors
++ `olp.*` contains overlapping genes
++ `uni.*` contains unique genes
++ `wrn.*` contains genes with warnings
 
-Last is to build an HMM.
+`fathom` doesn't want to create training files with alternative splicing. It 
+could create a case of overtraining for those specific genes. If you have a lot 
+of alternative splicing, you may want to remove all of the isoforms except for 
+the main one. `fathom` also doesn't know what to do with overlapping genes 
+because it requires genes to have intergenic sequence on either side. These 
+tend to be rare. Genes with unusual features or outright errors are separated 
+also.
 
-    hmm-assembler.pl my-genome params > my-genome.hmm
 
-There are a number of options for forge and hmm-assembler.pl that I have not
-described here. Hopefully I'll document these one day.
+The next step is to export all of the `uni` genes into their plus-stranded 
+versions.
+
+```
+../fathom -export 100 -plus uni.*
+```
+
+This creates 4 new files:
+
++ `export.aa`  contains the amino acid sequences
++ `export.ann` contains the annotation in ZFF format
++ `export.dna` contains the sequences in FASTA format
++ `export.tx` contains the sequences of the coding sequences
+
+Ideally, all of the proteins in `export.aa` start with `M` and end with `*`. 
+Similarly, the `export.tx` files should start with `ATG` and end in a stop 
+codon. All of the genes should validate without any reported warnings or 
+errors.
+
+```
+../fathom -validate export.ann export.dna
+```
+
+The next step is to run `forge`, which will create a large number of model 
+files.
+
+```
+../forge export.ann export.dna
+```
+
+Finally, run `hmm-assembler.pl` to glue the various models together to form an 
+hmm parameter file. There are several options, but we'll just use the defaults.
+
+```
+./hmm-assembler.pl A.thaliana . > at.hmm
+```
+
+To verify this works, you can try it on the various fasta files we've used.
+
+```
+../snap at.hmm export.dna
+../snap at.hmm uni.dna
+../snap at.hmm ../DATA/at.fa.gz
+```
+
+Now try the same procedures for the C. elegans and D. melanogaster files.
