@@ -3,7 +3,7 @@ SNAP Documentation
 
 ## Introduction ##
 
-SNAP is a general purpose gene finding program suitable for both eukaryotic and
+SNAP is a general purpose gene finding program suitable for both eukaryotic and 
 prokaryotic genomes. SNAP is an acroynm for Semi-HMM-based Nucleic Acid Parser.
 
 ## Reference ##
@@ -37,18 +37,19 @@ This software is covered by the MIT License.
 
 ## Your favorite genome... ##
 
-If you wish to train SNAP for a new genome, please contact me. Parameter
-estimation is not particularly difficult, but the procedure is not well
-documented and I have only included the minimum applications here. I've included
-the basic strategy at the end of this document.
+If you wish to train SNAP for a new genome, please contact me. Parameter 
+estimation is not particularly difficult, but the procedure is not well 
+documented and I have only included the minimum applications here. I've 
+included the basic strategy at the end of this document.
 
 
 INSTALLATION INSTRUCTIONS
 =========================
 
-The software is routinely compiled and tested on Mac OS X. It should compile
-fine on any Linux/Unix type operating systems but new compilers sometimes
-complain, so please let me know if you have problems.
+The software is routinely compiled and tested on Mac and Linux on a variety of 
+architectures. It should compile cleanly on any Linux/Unix type operating 
+systems but new compilers sometimes complain, so please let me know if you have 
+problems.
 
 ## Enviroment ##
 
@@ -77,19 +78,19 @@ Testing
 PARAMETER ESTIMATION
 ====================
 
-Sequences must be in FASTA format. It's a good idea if you don't have genes that
-are too related to each other.
+Sequences must be in FASTA format. It's a good idea if you don't have genes 
+that are too related to each other.
 
-Gene structures must be in ZFF format. What is ZFF? It is a non-standard format
-(ie. nobody uses it but me) that bears resemblence to FASTA and GFF (both true
-standards). There are two styles of ZFF, the short format and the long format.
-In both cases, the sequence records are separated by a definition line, just
-like FASTA. In the short format, there are 4 fields: Label, Begin, End, Group.
-The 4th field is optional. Label is a controlled vocabulary (see zoeFeature.h
-for a complete list). All exons of a gene (or more appropriately a
-transcriptional unit) must share the same unique group name. The strand of the
-feature is implied in the coordinates, so if Begin > End, the feature is on the
-minus strand. Here's and example of the short format with two sequences, each
+Gene structures must be in ZFF format. What is ZFF? It is a non-standard format 
+(ie. nobody uses it but me) that bears resemblence to FASTA and GFF (both true 
+standards). There are two styles of ZFF, the short format and the long format. 
+In both cases, the sequence records are separated by a definition line, just 
+like FASTA. In the short format, there are 4 fields: Label, Begin, End, Group. 
+The 4th field is optional. Label is a controlled vocabulary (see zoeFeature.h 
+for a complete list). All exons of a gene (or more appropriately a 
+transcriptional unit) must share the same unique group name. The strand of the 
+feature is implied in the coordinates, so if Begin > End, the feature is on the 
+minus strand. Here's and example of the short format with two sequences, each 
 containing a single gene on the plus strand:
 
     >sequence-1
@@ -103,11 +104,11 @@ containing a single gene on the plus strand:
     Exon    4185   4406   Y73E7A.7
     Eterm   5103   5280   Y73E7A.7
 
-The long format adds 5 fields between the coordinates and the group: Strand,
-Score, 5'-overhang, 3'-overhang, and Frame. Strand is +/-. Score is any floating
-point value. 5'- and 3'-overhang are the number of bp of an incomplete codon at
-each end of an exon. Frame is the reading frame (0..2 and *not* 1..3). Here's an
-example of the long format:
+The long format adds 5 fields between the coordinates and the group: Strand, 
+Score, 5'-overhang, 3'-overhang, and Frame. Strand is +/-. Score is any 
+floating point value. 5'- and 3'-overhang are the number of bp of an incomplete 
+codon at each end of an exon. Frame is the reading frame (0..2 and *not* 1..3). 
+Here's an example of the long format:
 
     >Y73E7A.6
     Einit    201    325   +    90   0   2   1   Y73E7A.6
@@ -238,4 +239,50 @@ To verify this works, you can try it on the various fasta files we've used.
 ../snap at.hmm ../DATA/at.fa.gz
 ```
 
-Now try the same procedures for the C. elegans and D. melanogaster files.
+---
+
+Next, we are going to try a slightly different training procedure that might be 
+better if you have a lot of genes that are getting stuffed into the `wrn.*` 
+files. Let's rewind a bit.
+
+```
+../fathom -categorize 100 at.zff ../DATA/at.fa.gz
+```
+
+Let's see how many genes are in each category.
+
+```
+grep -c ">" *.ann
+alt.ann:77
+err.ann:0
+olp.ann:0
+uni.ann:236
+wrn.ann:33
+```
+
+The standard procedure will have us training from the 236 genes in the `uni` 
+category. To recover the genes in the `wrn` category, we'll just glue them to 
+the `uni` and then export that for the training.
+
+```
+cat uni.ann wrn.ann > glue.ann
+cat uni.dna wrn.dna > glue.dna
+../fathom -export 100 -plus glue.ann glue.dna
+../forge export.ann export.dna
+../hmm-assembler.pl whatever .
+```
+
+---
+
+What about all of the genes in the `alt` category? Those genes are reported to 
+have multiple isoforms. Training from a gene with 10 isoforms would count that 
+gene 10 times, so these are generally skipped. However, as more and more 
+isoforms are found, this will become problematic. You will need some way to 
+figure out which isoform is _canonical_ and delete the rest. I don't have an 
+automated way to do that as each community has their own standards.
+
+---
+
+Try the training procedures for the C. elegans and D. melanogaster genomes 
+next. Note that these training sets represent just 1% of each chromosome and 
+are just for demonstration purposes.
