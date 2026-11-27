@@ -66,8 +66,16 @@ zoeFastaFile zoeReadFastaFile (FILE * stream) {
     char         * def = NULL;   /* definition */
 	zoeFastaFile   entry = NULL;
 	
-	/* initial check for fasta format */
+	/* skip blank lines and comment lines (;) before the first record */
 	c = fgetc(stream);
+	while (!feof(stream) && (c == ';' || isspace((unsigned char)c))) {
+		if (c == ';') {
+			while (!feof(stream) && c != '\n') c = fgetc(stream);
+		}
+		c = fgetc(stream);
+	}
+
+	/* initial check for fasta format */
     if (feof(stream)) {
 		return NULL;
 	}
